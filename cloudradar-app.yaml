@@ -1,0 +1,27 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: cloudradar
+  namespace: argocd            # ArgoCD Applications always live in the argocd namespace
+spec:
+  project: default
+
+  # WHERE the desired state lives (your Git repo)
+  source:
+    repoURL: https://github.com/mi5technologies/GitOps-Argocd.git
+    targetRevision: main
+    path: k8s                  # only this folder is deployed
+    directory:
+      recurse: true            # include k8s/backend, k8s/frontend, k8s/postgres subfolders
+
+  # WHERE to deploy it (this same cluster, cloudradar namespace)
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: cloudradar
+
+  syncPolicy:
+    automated:
+      prune: true              # delete resources removed from Git
+      selfHeal: true           # undo manual cluster changes that drift from Git
+    syncOptions:
+      - CreateNamespace=true   # create the cloudradar namespace if missing
