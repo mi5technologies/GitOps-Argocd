@@ -1,0 +1,23 @@
+# Frontend Service - this is where blue-green switching happens.
+# It only sends traffic to pods whose labels match the selector below.
+#
+# To switch traffic to green:
+#   - GitOps way (with ArgoCD): change "version: blue" to "version: green" below and git push.
+#   - Manual way (plain kubectl):
+#     kubectl patch service frontend -n cloudradar -p '{"spec":{"selector":{"app":"frontend","version":"green"}}}'
+#     (note: if ArgoCD self-heal is on, it will revert manual patches - use the GitOps way instead)
+apiVersion: v1
+kind: Service
+metadata:
+  name: frontend
+  namespace: cloudradar
+  labels:
+    app: frontend
+spec:
+  selector:
+    app: frontend
+    version: blue
+  ports:
+    - name: http
+      port: 80
+      targetPort: 80

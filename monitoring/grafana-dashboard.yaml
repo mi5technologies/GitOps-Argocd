@@ -1,0 +1,188 @@
+# Pre-built "CloudRadar Overview" dashboard for Grafana.
+# The Grafana sidecar (enabled in prometheus-values.yaml) watches for ConfigMaps
+# with the label grafana_dashboard=1 and loads them automatically - no clicking needed.
+#
+# Apply with:  kubectl apply -f monitoring/grafana-dashboard.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: cloudradar-dashboard
+  namespace: monitoring
+  labels:
+    grafana_dashboard: "1"
+data:
+  cloudradar-dashboard.json: |
+    {
+      "title": "CloudRadar Overview",
+      "uid": "cloudradar-overview",
+      "tags": ["cloudradar"],
+      "timezone": "browser",
+      "schemaVersion": 36,
+      "refresh": "30s",
+      "time": { "from": "now-1h", "to": "now" },
+      "panels": [
+        {
+          "id": 1,
+          "type": "stat",
+          "title": "Critical Findings",
+          "gridPos": { "h": 4, "w": 4, "x": 0, "y": 0 },
+          "targets": [
+            { "expr": "sum(cloudradar_findings_total{severity=\"critical\"})", "refId": "A" }
+          ],
+          "fieldConfig": {
+            "defaults": {
+              "color": { "mode": "fixed", "fixedColor": "red" },
+              "noValue": "0"
+            },
+            "overrides": []
+          }
+        },
+        {
+          "id": 2,
+          "type": "stat",
+          "title": "High Findings",
+          "gridPos": { "h": 4, "w": 4, "x": 4, "y": 0 },
+          "targets": [
+            { "expr": "sum(cloudradar_findings_total{severity=\"high\"})", "refId": "A" }
+          ],
+          "fieldConfig": {
+            "defaults": {
+              "color": { "mode": "fixed", "fixedColor": "orange" },
+              "noValue": "0"
+            },
+            "overrides": []
+          }
+        },
+        {
+          "id": 3,
+          "type": "stat",
+          "title": "Medium Findings",
+          "gridPos": { "h": 4, "w": 4, "x": 8, "y": 0 },
+          "targets": [
+            { "expr": "sum(cloudradar_findings_total{severity=\"medium\"})", "refId": "A" }
+          ],
+          "fieldConfig": {
+            "defaults": {
+              "color": { "mode": "fixed", "fixedColor": "yellow" },
+              "noValue": "0"
+            },
+            "overrides": []
+          }
+        },
+        {
+          "id": 4,
+          "type": "stat",
+          "title": "Low Findings",
+          "gridPos": { "h": 4, "w": 4, "x": 12, "y": 0 },
+          "targets": [
+            { "expr": "sum(cloudradar_findings_total{severity=\"low\"})", "refId": "A" }
+          ],
+          "fieldConfig": {
+            "defaults": {
+              "color": { "mode": "fixed", "fixedColor": "green" },
+              "noValue": "0"
+            },
+            "overrides": []
+          }
+        },
+        {
+          "id": 5,
+          "type": "stat",
+          "title": "CloudRadar Pods Running",
+          "gridPos": { "h": 4, "w": 4, "x": 16, "y": 0 },
+          "targets": [
+            { "expr": "sum(kube_pod_status_phase{namespace=\"cloudradar\", phase=\"Running\"})", "refId": "A" }
+          ],
+          "fieldConfig": {
+            "defaults": {
+              "color": { "mode": "fixed", "fixedColor": "blue" },
+              "noValue": "0"
+            },
+            "overrides": []
+          }
+        },
+        {
+          "id": 6,
+          "type": "gauge",
+          "title": "Compliance Score (CIS)",
+          "gridPos": { "h": 4, "w": 4, "x": 20, "y": 0 },
+          "targets": [
+            { "expr": "cloudradar_compliance_score{framework=\"cis\"}", "refId": "A" }
+          ],
+          "fieldConfig": {
+            "defaults": {
+              "min": 0,
+              "max": 100,
+              "noValue": "no scan yet",
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  { "color": "red", "value": null },
+                  { "color": "yellow", "value": 50 },
+                  { "color": "green", "value": 80 }
+                ]
+              }
+            },
+            "overrides": []
+          }
+        },
+        {
+          "id": 7,
+          "type": "timeseries",
+          "title": "Findings Over Time (by severity)",
+          "gridPos": { "h": 8, "w": 12, "x": 0, "y": 4 },
+          "targets": [
+            { "expr": "sum(cloudradar_findings_total) by (severity)", "legendFormat": "{{severity}}", "refId": "A" }
+          ]
+        },
+        {
+          "id": 8,
+          "type": "timeseries",
+          "title": "Pod CPU Usage (cloudradar namespace)",
+          "gridPos": { "h": 8, "w": 12, "x": 12, "y": 4 },
+          "targets": [
+            {
+              "expr": "sum(rate(container_cpu_usage_seconds_total{namespace=\"cloudradar\", container!=\"\"}[5m])) by (pod)",
+              "legendFormat": "{{pod}}",
+              "refId": "A"
+            }
+          ],
+          "fieldConfig": {
+            "defaults": { "unit": "percentunit" },
+            "overrides": []
+          }
+        },
+        {
+          "id": 9,
+          "type": "timeseries",
+          "title": "Pod Memory Usage (cloudradar namespace)",
+          "gridPos": { "h": 8, "w": 12, "x": 0, "y": 12 },
+          "targets": [
+            {
+              "expr": "sum(container_memory_working_set_bytes{namespace=\"cloudradar\", container!=\"\"}) by (pod)",
+              "legendFormat": "{{pod}}",
+              "refId": "A"
+            }
+          ],
+          "fieldConfig": {
+            "defaults": { "unit": "bytes" },
+            "overrides": []
+          }
+        },
+        {
+          "id": 10,
+          "type": "logs",
+          "title": "Centralized Logs (all cloudradar pods)",
+          "gridPos": { "h": 8, "w": 12, "x": 12, "y": 12 },
+          "datasource": { "type": "loki", "uid": "loki" },
+          "targets": [
+            { "expr": "{namespace=\"cloudradar\"}", "refId": "A" }
+          ],
+          "options": {
+            "showTime": true,
+            "wrapLogMessage": true,
+            "sortOrder": "Descending"
+          }
+        }
+      ]
+    }

@@ -1,0 +1,7 @@
+# Namespace that holds every CloudRadar resource.
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: cloudradar
+  labels:
+    name: cloudradar

@@ -1,0 +1,20 @@
+# Tells Prometheus to scrape the CloudRadar backend every 30 seconds.
+# The backend exposes Prometheus-format metrics at /api/metrics, including:
+#   cloudradar_findings_total{severity="critical|high|medium|low"}
+#   cloudradar_compliance_score{framework="cis"}
+#   cloudradar_last_scan_timestamp
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: cloudradar-backend
+  namespace: cloudradar
+  labels:
+    app: backend
+spec:
+  selector:
+    matchLabels:
+      app: backend           # matches the backend Service labels
+  endpoints:
+    - port: http             # the named port on the backend Service
+      path: /api/metrics
+      interval: 30s

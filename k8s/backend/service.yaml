@@ -1,0 +1,16 @@
+# Internal Service for the backend. The frontend nginx proxies /api here,
+# and Prometheus scrapes /api/metrics through it.
+apiVersion: v1
+kind: Service
+metadata:
+  name: backend
+  namespace: cloudradar
+  labels:
+    app: backend
+spec:
+  selector:
+    app: backend
+  ports:
+    - name: http
+      port: 8000
+      targetPort: 8000

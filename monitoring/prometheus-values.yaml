@@ -1,0 +1,41 @@
+# Minimal values for the kube-prometheus-stack Helm chart.
+# Installs: Prometheus + Grafana + node/pod metrics exporters + sensible default dashboards.
+#
+# Install command (see README step 7):
+#   helm install monitoring prometheus-community/kube-prometheus-stack -n monitoring -f monitoring/prometheus-values.yaml
+
+grafana:
+  # Grafana login: admin / cloudradar
+  adminPassword: cloudradar
+
+  # Auto-load any ConfigMap labelled grafana_dashboard=1 as a dashboard
+  sidecar:
+    dashboards:
+      enabled: true
+      label: grafana_dashboard
+      searchNamespace: ALL
+
+  # Add Loki so the Grafana "Explore" page and log panels can query centralized logs
+  additionalDataSources:
+    - name: Loki
+      type: loki
+      uid: loki
+      url: http://loki:3100
+      access: proxy
+
+prometheus:
+  prometheusSpec:
+    # Pick up EVERY ServiceMonitor in the cluster (not just ones created by this chart).
+    # Without this, our monitoring/servicemonitor.yaml would be ignored.
+    serviceMonitorSelectorNilUsesHelmValues: false
+    podMonitorSelectorNilUsesHelmValues: false
+    # Keep resource usage small for minikube
+    retention: 2d
+    resources:
+      requests:
+        cpu: 100m
+        memory: 512Mi
+
+# Not needed for this demo - saves resources on minikube
+alertmanager:
+  enabled: false

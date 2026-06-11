@@ -1,0 +1,11 @@
+# TLS cert/key generated in README step 4 - never commit these
+tls.key
+tls.crt
+
+# Build artifacts
+app/frontend/node_modules/
+app/frontend/dist/
+**/__pycache__/
+*.pyc
+*.egg-info/
+.pytest_cache/

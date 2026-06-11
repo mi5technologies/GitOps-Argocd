@@ -1,0 +1,28 @@
+# Public entry point: https://cloudradar.local
+# Handled by the ingress-nginx controller, which runs behind a LoadBalancer Service.
+# TLS uses the "cloudradar-tls" secret - created once with openssl (README step 4).
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: cloudradar
+  namespace: cloudradar
+  annotations:
+    # Redirect plain http to https
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+spec:
+  ingressClassName: nginx
+  tls:
+    - hosts:
+        - cloudradar.local
+      secretName: cloudradar-tls
+  rules:
+    - host: cloudradar.local
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: frontend
+                port:
+                  number: 80

@@ -1,0 +1,17 @@
+# Minimal values for the loki-stack Helm chart (centralized logging).
+# - Loki    = the log database
+# - Promtail = an agent on every node that ships ALL pod logs to Loki
+# Grafana already comes from kube-prometheus-stack, so it is disabled here.
+#
+# Install command (see README step 7):
+#   helm install loki grafana/loki-stack -n monitoring -f monitoring/loki-values.yaml
+
+loki:
+  enabled: true
+  isDefault: false       # Prometheus stays the default Grafana datasource
+
+promtail:
+  enabled: true
+
+grafana:
+  enabled: false         # we already have Grafana from kube-prometheus-stack

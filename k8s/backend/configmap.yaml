@@ -1,0 +1,10 @@
+# Non-secret configuration for the backend.
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: backend-config
+  namespace: cloudradar
+data:
+  AWS_DEFAULT_REGION: "us-east-1"
+  CSPM_RULES_DIR: "/app/cspm/rules"
+  CSPM_SNAPSHOTS_DIR: "/data/snapshots"
