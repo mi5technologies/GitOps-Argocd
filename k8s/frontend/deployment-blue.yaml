@@ -1,6 +1,3 @@
-# BLUE frontend deployment - the version currently receiving traffic.
-# Blue-green: the Service (service.yaml) selects "version: blue" OR "version: green".
-# Switching traffic is one command - see "Blue-Green Deployment" in the README.
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -23,8 +20,7 @@ spec:
     spec:
       containers:
         - name: frontend
-          # Replace your-dockerhub-username with your Docker Hub username (see README step 2)
-          image: your-dockerhub-username/cloudradar-frontend:v1
+          image: barutokun/cloudradar-frontend:latest
           imagePullPolicy: IfNotPresent
           ports:
             - name: http
