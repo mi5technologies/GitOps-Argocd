@@ -1,4 +1,4 @@
-# CloudRadar on Kubernetes (minikube + EKS) with ArgoCD GitOps
+# CloudRadar on Kubernetes (minikube) with ArgoCD GitOps
 
 Deploy the [CloudRadar](https://github.com/mi5technologies/CloudRadar) security tool as a 3-tier app on Kubernetes:
 
