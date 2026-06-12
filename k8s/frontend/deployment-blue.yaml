@@ -20,7 +20,7 @@ spec:
     spec:
       containers:
         - name: frontend
-          image: barutokun/cloudradar-frontend:latest
+          image: barutokun/cloudradar-frontend:v1
           imagePullPolicy: IfNotPresent
           ports:
             - name: http

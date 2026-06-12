@@ -23,8 +23,7 @@ spec:
     spec:
       containers:
         - name: frontend
-          # Change this tag (e.g. :v2) when rolling out a new version via green
-          image: your-dockerhub-username/cloudradar-frontend:v1
+          image: barutokun/cloudradar-frontend:v1
           imagePullPolicy: IfNotPresent
           ports:
             - name: http
