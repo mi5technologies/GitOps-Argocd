@@ -30,7 +30,7 @@ Browser ──https://cloudradar.local──> LoadBalancer ──> ingress-nginx
 | What | URL | Login |
 |---|---|---|
 | CloudRadar app | https://cloudradar.local | - |
-| ArgoCD UI | https://localhost:8080 | `admin` / see step 6.2 |
+| ArgoCD UI | https://localhost:8080 | `admin` / see- GitOps with ArgoCD section|
 | Grafana (dashboards) | http://localhost:3000 | `admin` / `cloudradar` |
 | Prometheus | http://localhost:9090 | - |
 
@@ -38,7 +38,7 @@ Browser ──https://cloudradar.local──> LoadBalancer ──> ingress-nginx
 
 Install once (all free):
 
-- [Docker Desktop](https://www.docker.com/products/docker-desktop/) (running)
+- [Docker Desktop](https://www.docker.com/products/docker-desktop/) 
 - [minikube](https://minikube.sigs.k8s.io/docs/start/) - `winget install Kubernetes.minikube`
 - [kubectl](https://kubernetes.io/docs/tasks/tools/) - `winget install Kubernetes.kubectl`
 - [helm](https://helm.sh/docs/intro/install/) - `winget install Helm.Helm`
@@ -59,19 +59,6 @@ minikube start --cpus=4 --memory=6g --cni=calico
 
 > `--cni=calico` is required for NetworkPolicies to actually be enforced
 > (the default minikube network ignores them silently).
-
-### Step 2 - Build and push the images
-
-
-
-```powershell
-# Replaces the placeholder in all YAML files
-Get-ChildItem k8s -Recurse -Filter *.yaml | ForEach-Object {
-  (Get-Content $_.FullName) -replace 'your-dockerhub-username', '<real-username>' | Set-Content $_.FullName
-}
-```
-
-```
 
 ### Step 2 - Install ingress-nginx (the LoadBalancer)
 
